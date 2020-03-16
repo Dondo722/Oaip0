@@ -1,49 +1,62 @@
+
 #include <iostream>
-#include <stdio.h>
-
-
 
 using namespace std;
 
-
-struct students
+struct StudData 
 {
-	char FIO[60];
-	double sball;
+	static const int N = 255;
+	char FIO[N] = "";
+	char group[N] = "";
+	int mathMark;
+	int chemistryMark;
+	int fysMark;
+	int informaticsMark;
+	double s_b;
 };
 
-void get(students* stud);
-void show(students* stud);
-
+void get(StudData* students, int N);
+void show(StudData* students, int N);
 
 int main()
 {
 	setlocale(LC_ALL, "ru");
 
-	students* stud = new students;
-	int length = 2;
-
-	for (int i = 0; i < length; i++)
-	{
-		get(stud);
-		show(stud);
-	}
+	int N = 5;
+	StudData* students = new StudData[N];
+	get(students, N);
+	show(students, N);
 
 
-	
-	delete stud;
+
 	return 0;
 }
-
-void get(students* stud)
+void get(StudData* students, int N)
 {
-	cout << "Введите данные о студенте " << endl;
-	cout << "ФИО:" << endl;
-	cin >> stud->FIO;
-	cout << "средний балл :" << endl;
-	cin >> stud->sball;
+	for (int i = 1; i < N+1; i++)
+	{
+		cout << "Введите данные " << i << "-ого студента " << endl;
+		cout << "ФИО : ";
+		cin >> students->FIO;
+		cout << "группа № ";
+		cin >> students->group;
+		cout << "Оценка по математике ";
+		cin >> students->mathMark;
+		cout << "Оценка по химии ";
+		cin >> students->chemistryMark;
+		cout << "Оценка по физике ";
+		cin >> students->fysMark;
+		cout << "Оценка по информатике ";
+		cin >> students->informaticsMark;
+	}
 }
-void show(students* stud)
+void show(StudData* students, int N)
 {
-	cout << "ФИО студента : " << stud->FIO << "\tсредний балл :" << stud->sball <<endl;
+	for (int i = 1; i < N + 1; i++)
+	{
+		cout << "ФИО :  " << students->FIO << "группа № " << students->group;
+		cout << "Оценка по математике " << students->mathMark << "Оценка по химии " << students->chemistryMark;
+		cout << "Оценка по физике " << students->fysMark << "Оценка по информатике " << students->informaticsMark;
+
+	}
 }
