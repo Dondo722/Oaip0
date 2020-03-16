@@ -1,45 +1,49 @@
 #include <iostream>
-#include <string>
-#include <fstream>
+#include <stdio.h>
+
+
 
 using namespace std;
 
 
+struct students
+{
+	char FIO[60];
+	double sball;
+};
+
+void get(students* stud);
+void show(students* stud);
 
 
-
-int main() 
+int main()
 {
 	setlocale(LC_ALL, "ru");
 
-	ofstream file;
+	students* stud = new students;
+	int length = 2;
 
-	cout << " Выберите , что вы хотите сделать:\n 1)Создание \n 2)Просмотр \n 3)Коррекцию ";
-	int choise;
-	cin >> choise;
-	switch (choise)
+	for (int i = 0; i < length; i++)
 	{
-	case 1:
-		cout << " Введите имя файла .txt";
-		string filename;
-		cin >> filename;
-		file.open(filename);
-		break;
+		get(stud);
+		show(stud);
 	}
 
 
-
-	//file.open("Stud_Data.txt", ofstream::app);
-
-	if (!file.is_open())
-	{
-		cout << "Ошибка при открытии файла";
-	}
-	else 
-	{
-		cout << " Выберите , что вы хотите сделать:\n 1)Создание \n 2)Просмотр \n 3)Коррекцию ";
-	}
-
-
+	
+	delete stud;
 	return 0;
+}
+
+void get(students* stud)
+{
+	cout << "Введите данные о студенте " << endl;
+	cout << "ФИО:" << endl;
+	cin >> stud->FIO;
+	cout << "средний балл :" << endl;
+	cin >> stud->sball;
+}
+void show(students* stud)
+{
+	cout << "ФИО студента : " << stud->FIO << "\tсредний балл :" << stud->sball <<endl;
 }
