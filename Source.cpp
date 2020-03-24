@@ -1,95 +1,132 @@
-
 #include <iostream>
+#include <limits>
 #include <fstream>
 #include <string>
+
 using namespace std;
 
-struct StudData 
+struct Data_ab_Stud
 {
-	string FIO;
-	string groupN;
-	int mathMark;
-	int chemistryMark;
-	int physMark;
-	int informaticsMark;
-	double s_b;
-};
+	char fio[30];
+	char group[30];
+	int math;
+    int chemistry;
+	int physics;
+	int informatics;
+	double s_b(int math, int chemistry, int physics, int informatics)
+	{
+		double a;
+		a = ((double)math + (double)chemistry + (double)physics + (double)informatics)/4;
+		return a;
+	}
+	void print()
+	{
+		cout << "Name: "<<fio << " "<<"Group: " << group << " ";
+		cout << "\nmath: " << math << "\nphysics: " << physics;
+		cout << "\nchemistry: " << chemistry << "\ninformatics: " << informatics;
+		cout << "\nS_b: " << s_b(math, chemistry, physics, informatics) << endl;
+		cout << "------------" << endl;
 
-bool check()
-{
-	char answ[2] = "";
-	cout << " Continue / Exit(y / n)" << endl;
-	cin.get(answ, 2);
-	cin.ignore(INT_MAX, '\n');
-	if (answ[1] == 'n')
-		return false;
-	else
-		return true;
-}// geztline trying fix
+	}
+};
 
 int main()
 {
-	ofstream outfile;
-	StudData student;
-	char ch;
-	outfile.open("Out.txt");
-
-	bool nextstep = true; 
-
-
-
-	while (nextstep)        // all good; input is ok, liil fixes will be great
+	string path2 = "zapis.txt";
+	string path = "result.txt";
+	int n = 1,mrk;
+	Data_ab_Stud* stud = new Data_ab_Stud ;
+	Data_ab_Stud st;
+	int ch;
+	ofstream rez,zap;
+	ifstream fin;
+	rez.open(path, ios:: app);
+	while (true)
 	{
-		cout << "Name " << endl;
-		cin >> student.FIO;
-		cout << "Group " << endl;
-		cin >> student.groupN;
-		cout << "math mark " << endl;
-		cin >> student.mathMark;
-		cout << "chemistry mark " << endl;
-		cin >> student.chemistryMark;
-		cout << "physics mark " << endl;
-		cin >> student.physMark;
-		cout << "informatics mark " << endl;
-		cin >> student.informaticsMark;
-
-		outfile << student.FIO << " " << student.groupN << " ";
-		outfile << "Математика : " << student.mathMark << " Химия : " << student.chemistryMark << " ";
-		outfile << " Физика : " << student.physMark << " Информатика : " << student.informaticsMark << endl;
-
-		cout << " Continue / Exit(y / n)" << endl;
+		cout << "1)Create \n2)Add \n3)file zapis \n4)file result \n5)exit" << endl;
 		cin >> ch;
-		if (ch == 'n')
-			nextstep = false;
-		else
-			nextstep = true;
-	}
-		//cout << "Continue / Exit (y/n)" << endl;
-		//cin >> ch;
-	
-
-	 //while (ch !='n');
-
-	outfile.close();
-
-	ifstream fin; // output i didn't tried ; need to write some algoritm
-	fin.open("Out.txt");
-	if (fin)
-	{
-		while (fin >> student.FIO >> student.groupN >> student.mathMark >> student.chemistryMark >> student.physMark >> student.informaticsMark)
+		switch (ch)
 		{
-			cout << "Name " << student.FIO << " Group " << student.groupN;
-			cout << "math mark " << student.mathMark << " chemistry mark " << student.chemistryMark;
-			cout << "physics mark " << student.physMark << " informatics mark " << student.informaticsMark;
+		case 1:
+			rez.close();
+			rez.open(path2);
+			cout << " file zapis.txt successfully created " << endl;
+			rez.close();
+			rez.open(path);
+			rez.close();
+			break;
+		case 2:
+			rez.close();
+			cout << "Choose a mark" << endl;
+			cin >> mrk;
+			zap.open(path2, ios_base::app);
+			if (!zap.is_open())
+			{
+				cout << "Open error!";
+			}
+			else
+			{
+			
+				for (int i = 0; i < n; i++)
+				{
+
+					cin.ignore(numeric_limits<streamsize>::max(), '\n');
+					cout << "Name " << endl;
+					cin.getline(stud[i].fio, 30);
+					cout << "Group " << endl;
+					cin >> stud[i].group;
+					cout << "math, physics,chemistry, informatics marks " << endl;
+					cin >> stud[i].math >> stud[i].physics >> stud[i].chemistry >> stud[i].informatics;
+
+					zap.write((char*)&stud[i], sizeof(Data_ab_Stud));
+
+					if (stud[i].s_b(stud[i].math, stud[i].chemistry, stud[i].physics, stud[i].informatics) > mrk)
+					{
+						rez.open(path, ios_base::app);
+						rez.write((char*)&stud[i], sizeof(Data_ab_Stud));
+						rez.close();
+					}
+				}
+			}
+			zap.close();
+			break;
+		case 3:
+			fin.open(path2, ios_base::in);
+			if (!fin.is_open())
+			{
+				cout << "Open Error!" << endl;
+			}
+			else
+			{
+				while (fin.read((char*)&st, sizeof(Data_ab_Stud)))
+				{
+					st.print();
+				}
+
+			}
+			fin.close();
+			break;
+		case 4:
+			fin.open(path);
+			if (!fin.is_open())
+			{
+				cout << "Open Error!" << endl;
+			}
+			else
+			{
+				while (fin.read((char*)&st, sizeof(Data_ab_Stud)))
+				{
+					st.print();
+				}
+
+			}
+			fin.close();
+			break;
+		case 0:
+			return false;
 		}
-		fin.close();
 	}
-	else
-	{
-		cout << "ERROR!" << endl;
-	}
-	cin.get();
-	cin.get();
+	rez.close();
 	return 0;
 }
 
