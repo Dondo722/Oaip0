@@ -1,55 +1,65 @@
 #include <iostream>
-#include <limits>
 #include <fstream>
 #include <string>
 
 using namespace std;
 
+const int length = 100;
+
 struct Data_ab_Stud
 {
-	char fio[30];
-	char group[30];
-	int math;
-    int chemistry;
-	int physics;
-	int informatics;
+	char fname[30] = "NULL";
+	char lname[30] = "NULL";
+	int group = 1;
+	int math = 9;
+    int chemistry = 10;
+	int physics = 8;
+	int informatics = 4;
 	double s_b(int math, int chemistry, int physics, int informatics)
 	{
 		double a;
 		a = ((double)math + (double)chemistry + (double)physics + (double)informatics)/4;
 		return a;
 	}
+	void print(Data_ab_Stud* stud, int i)
+	{
+		cout << "Name: " << stud[i].fname <<" "<< stud[i].lname << " " << "Group: " << stud[i].group << " ";
+		cout << "\nmath: " << stud[i].math << "\nphysics: " << stud[i].physics;
+		cout << "\nchemistry: " << stud[i].chemistry << "\ninformatics: " << stud[i].informatics;
+		cout << "\nS_b: " << stud[i].s_b(stud[i].math, stud[i].chemistry, stud[i].physics, stud[i].informatics) << endl;
+		cout << "------------" << endl;
+	}
 	void print()
 	{
-		cout << "Name: "<<fio << " "<<"Group: " << group << " ";
+		cout << "Name: " << fname <<" "<< lname << " " << "Group: " << group << " ";
 		cout << "\nmath: " << math << "\nphysics: " << physics;
 		cout << "\nchemistry: " << chemistry << "\ninformatics: " << informatics;
 		cout << "\nS_b: " << s_b(math, chemistry, physics, informatics) << endl;
 		cout << "------------" << endl;
-
 	}
 };
 
 int main()
 {
-	string path2 = "zapis.txt";
 	string path = "result.txt";
-	int n = 1,mrk;
-	Data_ab_Stud* stud = new Data_ab_Stud ;
-	Data_ab_Stud st;
-	int ch;
+	string s,name,str;
+	char  xfname[30],xlname[30];
+	int n = 1, i , ch, grp, Sb, llgth = 0;
+	Data_ab_Stud* stud = new Data_ab_Stud [length] ;
+	Data_ab_Stud rst;
 	ofstream rez,zap;
 	ifstream fin;
+	fstream redact;
+	streampos pos1;
 	rez.open(path, ios:: app);
 	while (true)
 	{
-		cout << "1)Create \n2)Add \n3)file zapis \n4)file result \n5)exit" << endl;
+		cout << "1)Create \n2)Add \n3)View \n4)find \n5)redact \n0)exit" << endl;
 		cin >> ch;
 		switch (ch)
 		{
 		case 1:
 			rez.close();
-			rez.open(path2);
 			cout << " file zapis.txt successfully created " << endl;
 			rez.close();
 			rez.open(path);
@@ -57,77 +67,112 @@ int main()
 			break;
 		case 2:
 			rez.close();
-			cout << "Choose a mark" << endl;
-			cin >> mrk;
-			zap.open(path2, ios_base::app);
+			zap.open(path, ios::binary | ios::app);
 			if (!zap.is_open())
 			{
 				cout << "Open error!";
 			}
 			else
 			{
-			
-				for (int i = 0; i < n; i++)
+
+				for (i = 0; i < length; i++)
 				{
 
-					cin.ignore(numeric_limits<streamsize>::max(), '\n');
 					cout << "Name " << endl;
-					cin.getline(stud[i].fio, 30);
+					cin >> stud[i].fname >> stud[i].lname;
 					cout << "Group " << endl;
 					cin >> stud[i].group;
 					cout << "math, physics,chemistry, informatics marks " << endl;
 					cin >> stud[i].math >> stud[i].physics >> stud[i].chemistry >> stud[i].informatics;
 
 					zap.write((char*)&stud[i], sizeof(Data_ab_Stud));
-
-					if (stud[i].s_b(stud[i].math, stud[i].chemistry, stud[i].physics, stud[i].informatics) > mrk)
-					{
-						rez.open(path, ios_base::app);
-						rez.write((char*)&stud[i], sizeof(Data_ab_Stud));
-						rez.close();
-					}
+					break;
 				}
 			}
 			zap.close();
+
 			break;
 		case 3:
-			fin.open(path2, ios_base::in);
+			fin.open(path, ios::binary);
 			if (!fin.is_open())
 			{
 				cout << "Open Error!" << endl;
 			}
 			else
 			{
-				while (fin.read((char*)&st, sizeof(Data_ab_Stud)))
+				while (fin.read((char*)&rst, sizeof(Data_ab_Stud)))
 				{
-					st.print();
+					rst.print();
 				}
-
 			}
 			fin.close();
 			break;
 		case 4:
-			fin.open(path);
-			if (!fin.is_open())
+			fin.open(path, ios::binary);
+			cout << "group number :" << endl;
+			cin >> grp;
+			cout << "average mark :" << endl;
+			cin >> Sb;
+			for (int i = 0; i < 1; i++)
 			{
-				cout << "Open Error!" << endl;
-			}
-			else
-			{
-				while (fin.read((char*)&st, sizeof(Data_ab_Stud)))
+				while (fin.read((char*)&rst, sizeof(Data_ab_Stud)))
 				{
-					st.print();
+					stud[i] = rst;
+					if (stud[i].group == grp && stud[i].s_b(stud[i].math, stud[i].chemistry, stud[i].physics, stud[i].informatics) > Sb)
+					{
+						stud[i].print(stud, i);
+					}
 				}
-
 			}
 			fin.close();
 			break;
+		case 5:
+			cout << "Student Name :" << endl;
+			cin >> xfname >> xlname;
+
+			redact.open(path, ios::app | ios::in | ios::out);
+			for (int i = 0; i < 1; i++)
+			{
+				while (redact.read((char*)&rst, sizeof(Data_ab_Stud)))
+				{
+					stud[i] = rst;
+					i++;
+				}
+			}
+			for (int i = 0; i < length; i++)
+			{
+
+					if (strcmp(stud[i].fname, xfname) == 0 && strcmp(stud[i].lname, xlname) == 0)
+					{
+						stud[i].print();
+						cout << "new data" << endl;
+						cout << "Name " << endl;
+						cin >> stud[i].fname >> stud[i].lname;
+						cout << "Group " << endl;
+						cin >> stud[i].group;
+						cout << "math, physics,chemistry, informatics marks " << endl;
+						cin >> stud[i].math >> stud[i].physics >> stud[i].chemistry >> stud[i].informatics;
+						cout << "changed student data: " << endl;
+						stud[i].print();
+						break;
+					}
+			}
+			redact.close();
+			zap.open(path, ios::binary);
+			for ( i = 0; i < length; i++)
+			{
+				if (strcmp(stud[i].fname, "NULL") == 0)
+					break;
+
+				zap.write((char*)&stud[i], sizeof(Data_ab_Stud));
+			}
+			zap.close();
+			break;
 		case 0:
-			return false;
+			rez.close();
+			return 1;
 		}
 	}
-	rez.close();
-	return 0;
 }
 
 
